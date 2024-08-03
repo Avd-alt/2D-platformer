@@ -1,17 +1,21 @@
 using UnityEngine;
-using UnityEngine.UI;
 
-public class BarVampirism : MonoBehaviour
+public class BarVampirism : Bar
 {
-    [SerializeField] private PlayerVampirism _vampirism;
-    [SerializeField] private Slider _slider;
+    [SerializeField] private PlayerVampirism _playerVampirism;
 
-    private void Update()
+    private void OnEnable()
     {
-        float targetValue = _vampirism.Duration;
+        _playerVampirism.ChangedValueHealth += ChangeDisplay;
+    }
 
-        transform.rotation = Quaternion.identity;
+    private void OnDisable()
+    {
+        _playerVampirism.ChangedValueHealth -= ChangeDisplay;
+    }
 
-        _slider.value = targetValue;
+    public override void ChangeDisplay()
+    {
+        Slider.value = _playerVampirism.Duration;
     }
 }

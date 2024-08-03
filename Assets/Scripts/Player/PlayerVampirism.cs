@@ -13,7 +13,6 @@ public class PlayerVampirism : MonoBehaviour
     private Coroutine _vampirismCoroutine;
     private float _radiusAura = 4f;
     private float _damage = 10f;
-    private float _heal = 10f;
     private bool _isRecharging;
     private float _timeToDelay = 1f;
     private float _oneSecondTimeAbility = 1f;
@@ -78,8 +77,16 @@ public class PlayerVampirism : MonoBehaviour
 
         if (nearestEnemy != null && _damage > 0)
         {
-            nearestEnemy.GetComponent<Health>().TakeDamage(_damage);
-            _playerHealth.Heal(_heal);
+            Health enemyHealth = nearestEnemy.GetComponent<Health>();
+
+            if (enemyHealth != null)
+            {
+                float damageDealt = Mathf.Min(_damage, enemyHealth.CurrentHealth);
+
+                enemyHealth.TakeDamage(damageDealt);
+
+                _playerHealth.Heal(damageDealt);
+            }
         }
     }
 
@@ -115,12 +122,6 @@ public class PlayerVampirism : MonoBehaviour
         }
 
         _isRecharging = false;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(_pointAura.transform.position, _radiusAura);
     }
 
     private void DisableComponentAtDeath()
